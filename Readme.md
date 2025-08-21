@@ -12,6 +12,7 @@ For detecting biosynthetic regions using fungiSMASH on all downloaded data, see 
 * `ete3` and `libxml2`. Alternatively, you can use the provided `yml` file with conda (`conda env create --file mycocosmdownloader.yml`)
 * [`curl`](https://curl.se/) (should already be installed in Mac or Linux systems)
 * A JGI account
+* Python 3.12 or newer
 
 
 # Usage (tested 2024-02)
