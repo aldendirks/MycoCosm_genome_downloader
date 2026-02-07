@@ -2,9 +2,7 @@
 
 Download genomes and protein annotation files from MycoCosm.
 
-This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome_downloader
-
-It has been updated from the original (v1.3.0) to function with `ete4`.
+This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome_downloader by [https://github.com/jorgecnavarrom](https://github.com/jorgecnavarrom). It has been updated from the original (v1.3.0) to function with `ete4`.
 
 
 ## Requirements and installation
@@ -21,7 +19,7 @@ source mycocosmdownloader/bin/activate
 pip install ete4 lxml
 ```
 
-Optional: save your JGI login credentials as a txt file (credentials.txt) in the git repository to automatically log in. The username should be on the first line and the password on the second. 
+Optional: save your JGI login credentials as a txt file (`credentials.txt`) in the git repository to automatically log in for commands that require login credentials. The username should be on the first line and the password on the second. 
 
 
 ## Usage 
@@ -38,7 +36,7 @@ python mycocosm_genome_downloader.py --update
 
 It is optional but recommended to specify an output folder when downloading files. Otherwise, they will be downloaded into the directory `output` in the git repository. 
 
-1. Obtain the [list of genomes](https://mycocosm.jgi.doe.gov/ext-api/mycocosm/catalog/download-group?flt=&seq=all&pub=all&grp=fungi&srt=released&ord=asc) using either the default output directory or specifying your own:
+1. Obtain the [list of genomes](https://mycocosm.jgi.doe.gov/ext-api/mycocosm/catalog/download-group?flt=&seq=all&pub=all&grp=fungi&srt=released&ord=asc) using either the default output directory or specifying your own.
 
 ```
 python mycocosm_genome_downloader.py --getgenomelist
@@ -47,21 +45,19 @@ python mycocosm_genome_downloader.py -o $out --getgenomelist
 
 The list of genomes is a comma-separated value file which enlists all current projects ("**portals**") in MycoCosm (`MycoCosm_Genome_list.csv`). Note: it uses ISO-8859-15 encoding.
 
-2. Obtain a list of files to download using either the default output directory or specifying your own and optionally including credentials files for easier running:
+2. Obtain a list of files to download using either the default output directory or specifying your own and optionally including credentials files for easier running.
 
 ```
 python mycocosm_genome_downloader.py --getxml
 python mycocosm_genome_downloader.py -o $out -j $credentials --getxml
 ```
 
-The list of files is stored as `MycoCosm_data.xml`. This file takes a long time to download and approaches 100 MB in size. After downloading, the XML file is re-formatted to be human-readable.
-
-If there is already a file called `MycoCosm_data.xml` in the output folder, it will be updated with any missing data.
+The list of files is stored as `MycoCosm_data.xml`. This file takes a long time to download and approaches 100 MB in size. After downloading, the XML file is re-formatted to be human-readable. If there is already a file called `MycoCosm_data.xml` in the output folder, it will be updated with any missing data.
 
 
 ### Download data
 
-Once you have the genome and file list, use them to download the data with:
+Once you have the genomes and files lists, use them to download the data. 
 
 ```
 python mycocosm_genome_downloader.py -o $out --csv [path to MycoCosm_Genome_list.csv] --xml [path to MycoCosm_data.xml]
@@ -71,12 +67,9 @@ This will create a directory structure that follows the fungal taxonomy tree as 
 
 Optional: use parameter `--simulate` to create the directory structure without downloading any files.
 
+### Optional: re-use data
 
-
-
-
-
-
+If you already have downloaded data, you can simply use your local copy of the files instead of downloading them. This makes it easier to update with new genomes. First, use option `--getprevious`, which will scan a base folder with previous results and create a file called `previously_downloaded_files.tsv`. Use this file with option `--previous` to skip files already downloaded.
 
 
 ## Output
@@ -86,12 +79,7 @@ Each 'leaf' folder within the folder structure represents a genome from MycoCosm
 * `JGI_download_list_[date].txt`: All the files that were downloaded
 * `List_gene_gff_filenames.txt`: All gff files for each portal
 
-
-### Optional: re-use data
-
-If you already have downloaded data, you can simply use your local copy of the files instead of downloading them. This makes it easier to update with new genomes. First, use option `--getprevious`, which will scan a base folder with previous results and create a file called `previously_downloaded_files.tsv`. Use this file with option `--previous` to skip files already downloaded
-
-## Known limitations, notes
+## Known limitations and notes
 
 * The incorrect gff might have been chosen
 * Some old gff files can't be processed correctly by other tools (e.g. bcbio.gff)
@@ -101,7 +89,7 @@ If you already have downloaded data, you can simply use your local copy of the f
 
 ### Target download folders
 
-These are the folders that are scanned for files, as they appear while in each Portal's download section:
+These are the folders that are scanned for files, as they appear in each Portal's download section:
 
 * Assemblies: "Genome Assembly (unmasked)" (previously called "Assembled scaffolds (unmasked)")
 * Gene annotations: "Filtered Models ('best')"
@@ -125,8 +113,3 @@ There are usually a few files to choose from in the "Filtered Models ('best')" f
 * Excluded assemblies (hardcoded). Ignore these filenames as they're not related to assemblies, are old versions or
  are assemblies of meta-samples: `1034997.Tuber_borchii_Tbo3840.standard.main.scaffolds.fasta.gz`, `Spofi1.draft.mito.scaffolds.fasta.gz`, `Patat1.draft.mito.scaffolds.fasta.gz`, `PleosPC9_1_Assembly_scaffolds.fasta.gz`, `Neuhi1_PlasmidAssemblyScaffolds.fasta.gz`, `CocheC5_1_assembly_scaffolds.fasta.gz`, `Alternaria_brassicicola_masked_assembly.fasta.gz`, `Aciri1_meta_AssemblyScaffolds.fasta.gz`, `Rhoto_IFO0880_2_AssemblyScaffolds.fasta.gz`
 * Ignored portals (hardcoded). Metaprojects or old versions: `Rhoto_IFO0880_2`, `Aciri1_meta`, `Pospl1`
-
-
-## Author
-
-[https://github.com/jorgecnavarrom](https://github.com/jorgecnavarrom)
