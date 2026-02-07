@@ -42,7 +42,7 @@ import subprocess as sp
 from subprocess import DEVNULL, STDOUT, CalledProcessError
 from lxml import etree
 from getpass import getpass
-from ete3 import NCBITaxa
+from ete4.ncbi_taxonomy import NCBITaxa
 import codecs  # there's some strange character from MycoCosm's list
 import time
 from datetime import datetime
@@ -165,6 +165,15 @@ def command_parser():
         type=Path,
         dest="exclude_list"
     )
+    group_input.add_argument(
+        "-j",
+        "--credentials-file",
+        help="Optional file containing JGI username and password. \
+Format: username on first line, password on second line. \
+If not provided, you will be prompted to enter credentials",
+        type=Path,
+        dest="credentials_file"
+    )
 
     group_output = parser.add_argument_group("Output")
     group_output.add_argument(
@@ -189,17 +198,38 @@ def command_parser():
 # *****************************************************************************
 
 
-def JGI_login(cookie_path):
+def JGI_login(cookie_path, credentials_file=None):
     """
     Get (physical) cookie. Needed to download files from JGI
+    
+    Args:
+        cookie_path: Path where the cookie file should be saved
+        credentials_file: Optional Path to a file containing username and password
+                         Format: username on first line, password on second line
     """
 
-    print("Please enter your JGI credentials:")
-    user = input("Username: ")
-    password = getpass()
-
-    if user == "" or password == "":
-        exit("Missing info for JGI login")
+    if credentials_file:
+        # Read credentials from file
+        try:
+            with open(credentials_file, 'r') as f:
+                lines = f.readlines()
+                if len(lines) < 2:
+                    exit("Credentials file must contain at least 2 lines (username and password)")
+                user = lines[0].strip()
+                password = lines[1].strip()
+                if user == "" or password == "":
+                    exit("Username and password cannot be empty in credentials file")
+        except FileNotFoundError:
+            exit(f"Credentials file not found: {credentials_file}")
+        except Exception as e:
+            exit(f"Error reading credentials file: {e}")
+    else:
+        # Prompt user for credentials
+        print("Please enter your JGI credentials:")
+        user = input("Username: ")
+        password = getpass()
+        if user == "" or password == "":
+            exit("Missing info for JGI login")
 
     # This should be equivalent to
     # curl 'https://signon.jgi.doe.gov/signon/create' --data-urlencode 'login=USER_NAME' --data-urlencode 'password=USER_PASSWORD' -c cookies > /dev/null
@@ -622,10 +652,10 @@ def annotate_projects(organisms_csv: dict, xml_file: Path,
             for filename, dt in gff_filenames[portal]:
                 if filename in skipped_gffs:
                     f.write(
-                        f"\t{dt.strftime("%Y-%m-%d")}\t{filename} (SKIPPED)"
+                        f"\t{dt.strftime('%Y-%m-%d')}\t{filename} (SKIPPED)"
                     )
                 else:
-                    f.write(f"\t{dt.strftime("%Y-%m-%d")}\t{filename}")
+                    f.write(f"\t{dt.strftime('%Y-%m-%d')}\t{filename}")
 
                 if filename == organisms_csv[portal].gff_file:
                     f.write(" *\n")
@@ -956,7 +986,7 @@ def get_aux_files(args, cookie_path) -> None:
     if args.getxml:
         mycocosm_csv = o / "MycoCosm_Genome_list.csv"
         print("Downloading xml file")
-        if not JGI_login(cookie_path):
+        if not JGI_login(cookie_path, args.credentials_file):
             exit("Error: Cannot log in to JGI...")
         elif not mycocosm_csv.is_file():
             exit("Error downloading xml files: download genome list first")
@@ -1074,12 +1104,12 @@ def main():
         print("\nBeginning simulation")
     else:
         print("\nBeginning file download")
-        if not JGI_login(cookie_path):
+        if not JGI_login(cookie_path, args.credentials_file):
             exit("Error: Cannot log in to JGI...")
 
     # Make a list of all files for each portal. If there's any error
     # we can start here
-    download_list_file = f"JGI_download_list_{time.strftime("%Y-%m-%d", time.localtime())}.txt"
+    download_list_file = f"JGI_download_list_{time.strftime('%Y-%m-%d', time.localtime())}.txt"
     with open(o / download_list_file, "w", encoding="utf-8") as f:
         for portal in organisms_csv:
             fungus = organisms_csv[portal]

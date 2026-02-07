@@ -1,63 +1,82 @@
-# MycoCosm genome downloader
+# MycoCosm Genome Downloader
 
-(Note: This project is unfrequently maintained, and is mostly kept here for archival purposes)
+Download genomes and protein annotation files from MycoCosm.
 
-Helps to download genomes (fasta + gff) files from MycoCosm.
+This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome_downloader
 
-For detecting biosynthetic regions using fungiSMASH on all downloaded data, see the companion [script](launch_fungiSMASH_on_MycoCosm/)
+It has been updated from the original (v1.3.0) to function with `ete4`.
 
 
-# Requirements
+## Requirements and installation
 
-* `ete3` and `libxml2`. Alternatively, you can use the provided `yml` file with conda (`conda env create --file mycocosmdownloader.yml`)
-* [`curl`](https://curl.se/) (should already be installed in Mac or Linux systems)
 * A JGI account
-* Python 3.12 or newer
+* Python 3.14 or newer
+* `ete4` and `libxml2`
+
+Clone this git repository, add it to the PATH, change into it, and install the dependencies. 
+
+```
+python -m venv mycocosmdownloader
+source mycocosmdownloader/bin/activate
+pip install ete4 lxml
+```
+
+Optional: save your JGI login credentials as a txt file (credentials.txt) in the git repository to automatically log in. The username should be on the first line and the password on the second. 
 
 
-# Usage (tested 2024-02)
+## Usage 
 
-## Update taxonomy database
+### Update the taxonomy database
 
-As part of the output of this program, a "taxonomy" file is created, which includes the lineage for each species (this lineage is also used to create the folder structure for the output). For this, `ete3`` is used. Use the following command to update the database:
+As part of the output of this program, a "taxonomy" file is created, which includes the lineage for each species (this lineage is also used to create the folder structure for the output). For this, `ete4` is used. Use the following command to update the database:
+
 ```
 python mycocosm_genome_downloader.py --update
 ```
 
-## Obtain data files
+### Obtain data files
 
-1. Obtain the [list of genomes](https://mycocosm.jgi.doe.gov/ext-api/mycocosm/catalog/download-group?flt=&seq=all&pub=all&grp=fungi&srt=released&ord=asc):
+It is optional but recommended to specify an output folder when downloading files. Otherwise, they will be downloaded into the directory `output` in the git repository. 
+
+1. Obtain the [list of genomes](https://mycocosm.jgi.doe.gov/ext-api/mycocosm/catalog/download-group?flt=&seq=all&pub=all&grp=fungi&srt=released&ord=asc) using either the default output directory or specifying your own:
+
 ```
 python mycocosm_genome_downloader.py --getgenomelist
+python mycocosm_genome_downloader.py -o $out --getgenomelist
 ```
 
-**Note 2025-02**: the link above currently leads to a "are you a human" page, so this method doesn't work. Please download the file and name it `MycoCosm_Genome_list.csv`
+The list of genomes is a comma-separated value file which enlists all current projects ("**portals**") in MycoCosm (`MycoCosm_Genome_list.csv`). Note: it uses ISO-8859-15 encoding.
 
-The list of genomes is a comma-separated value file which enlists all current projects ("**portals**") in MycoCosm (`MycoCosm_Genome_list.csv`, Note: it uses ISO-8859-15 encoding); 
+2. Obtain a list of files to download using either the default output directory or specifying your own and optionally including credentials files for easier running:
 
-2. Obtain a list of files:
 ```
 python mycocosm_genome_downloader.py --getxml
+python mycocosm_genome_downloader.py -o $out -j $credentials --getxml
 ```
-The list of files is stored as `MycoCosm_data.xml` (Note: this is ~40Mb file which may take a long time to download. After downloading, it is re-formatted to be human-readable).
+
+The list of files is stored as `MycoCosm_data.xml`. This file takes a long time to download and approaches 100 MB in size. After downloading, the XML file is re-formatted to be human-readable.
 
 If there is already a file called `MycoCosm_data.xml` in the output folder, it will be updated with any missing data.
 
-Both these files will be stored in the folder specified by the `--outputfolder` argument (default: 'output'). You will need your credentials to retrieve the file list.
 
+### Download data
 
-## Download data
+Once you have the genome and file list, use them to download the data with:
 
-Once you have the genome and file list, use them to download the data with
 ```
-python mycocosm_genome_downloader.py --csv [path to MycoCosm_Genome_list.csv] --xml [path to MycoCosm_data.xml]
+python mycocosm_genome_downloader.py -o $out --csv [path to MycoCosm_Genome_list.csv] --xml [path to MycoCosm_data.xml]
 ```
 
-This will create a folder structure that follows the fungal taxonomy tree as MycoCosm's [main page](https://mycocosm.jgi.doe.gov/mycocosm/home)
+This will create a directory structure that follows the fungal taxonomy tree as MycoCosm's [main page](https://mycocosm.jgi.doe.gov/mycocosm/home).
 
-Optional: use parameter `--simulate` to only create the structure, but don't download any file.
+Optional: use parameter `--simulate` to create the directory structure without downloading any files.
 
-Note: as of 2022-01, the downloaded files sum about 33 GiB
+
+
+
+
+
+
 
 
 ## Output
