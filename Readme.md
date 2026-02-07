@@ -2,7 +2,7 @@
 
 Download genomes and protein annotation files from MycoCosm.
 
-This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome_downloader by [https://github.com/jorgecnavarrom](https://github.com/jorgecnavarrom). It has been updated from the original (v1.3.0) to function with `ete4`.
+This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome_downloader by [Jorge Navarro](https://github.com/jorgecnavarrom). It has been updated from the original (v1.3.0) to function with `ete4`.
 
 
 ## Requirements and installation
