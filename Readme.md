@@ -1,6 +1,6 @@
 # MycoCosm Genome Downloader
 
-Download genomes and protein annotation files from MycoCosm.
+Download genome FASTA files, proteome FASTA files, and GFF3 annotation files from MycoCosm.
 
 This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome_downloader by [Jorge Navarro](https://github.com/jorgecnavarrom). It has been updated from the original (v1.3.0) to function with `ete4`.
 
@@ -14,8 +14,8 @@ This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome
 Clone this git repository, add it to the PATH, change into it, and install the dependencies. 
 
 ```
-python -m venv mycocosmdownloader
-source mycocosmdownloader/bin/activate
+python -m venv venv
+source venv/bin/activate
 pip install ete4 lxml
 ```
 
@@ -52,12 +52,12 @@ python mycocosm_genome_downloader.py --getxml
 python mycocosm_genome_downloader.py -o $out -j $credentials --getxml
 ```
 
-The list of files is stored as `MycoCosm_data.xml`. This file takes a long time to download and approaches 100 MB in size. After downloading, the XML file is re-formatted to be human-readable. If there is already a file called `MycoCosm_data.xml` in the output folder, it will be updated with any missing data.
+The list of files is stored as `MycoCosm_data.xml`. This file takes about an hour to download and is around 70 MB in size. After downloading, the XML file is re-formatted to be human-readable. If there is already a file called `MycoCosm_data.xml` in the output folder, it will be updated with any missing data.
 
 
 ### Download data
 
-Once you have the genomes and files lists, use them to download the data. 
+Once you have the genomes and files lists, use them to download the data. It took about four hours to download 2864 portals and the compressed files sum up to about 40 GB.
 
 ```
 python mycocosm_genome_downloader.py -o $out --csv [path to MycoCosm_Genome_list.csv] --xml [path to MycoCosm_data.xml]
