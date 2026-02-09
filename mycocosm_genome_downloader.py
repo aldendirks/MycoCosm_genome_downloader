@@ -10,7 +10,8 @@ TaxId   JGI_short_name  Complete name   Original name   +files location
 Note that JGI only lists the latest version (i.e. if v2.0 is available for a 
 certain assembly, v1.0 will not be available anymore)
     
-    
+--
+
 generic XML quick guide (to manipulate with etree):
 This is a node:
     <data year="2018">
@@ -23,16 +24,6 @@ This is a node:
 
 Elements can be nested.
 
----
-requires: lxml etetoolkit ete3 ete_toolchain
-
----
-
-v1.3.0: as of 2024-08, downloading the file list by querying for the xml
-file with organism=fungi no longer works (reason: "too many files"). This
-version addresses that
-
-#TODO: exit if JGI logging in is not successful
 """
 
 import argparse
