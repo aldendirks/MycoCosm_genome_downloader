@@ -1,11 +1,11 @@
 # MycoCosm Genome Downloader
 
-Download genome FASTA files, proteome FASTA files, and GFF3 annotation files from MycoCosm.
+Download genome FASTA files and GFF3 annotation files from all JGI MycoCosm portals.
 
 This project is a fork of https://github.com/WesterdijkInstitute/MycoCosm_genome_downloader by [Jorge Navarro](https://github.com/jorgecnavarrom). It has been updated from the original (v1.3.0) to function with `ete4`.
 
 
-## Requirements and installation
+## Requirements and Installation
 
 * A JGI account
 * Python 3.14 or newer
@@ -19,7 +19,7 @@ source venv/bin/activate
 pip install ete4 lxml
 ```
 
-Optional: save your JGI login credentials as a txt file (`credentials.txt`) in the git repository to automatically log in for commands that require login credentials. The username should be on the first line and the password on the second. 
+**Optional but recommended:** save your JGI login credentials as a txt file (`credentials.txt`) in the git repository to automatically log in for commands that require login credentials. The username should be on the first line and the password on the second. 
 
 
 ## Usage 
