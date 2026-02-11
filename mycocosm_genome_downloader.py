@@ -636,6 +636,11 @@ def annotate_projects(organisms_csv: dict, xml_file: Path, hardcoded_gff_files: 
             print(f"No 'Files' node in portal {portal}, skipping...")
             continue
 
+        # Initialize variables to None to avoid UnboundLocalError
+        asm_unmasked_node = None
+        asm_masked_node = None
+        gff_node = None
+        
         for folder in Fungi_files:
             if folder.attrib["name"] == "Assembly":
                 Assembly_folder = folder
@@ -653,15 +658,30 @@ def annotate_projects(organisms_csv: dict, xml_file: Path, hardcoded_gff_files: 
                             if subsubfolder.attrib["name"] == "Genes":
                                 gff_node = subsubfolder
 
+        # Validate that required nodes were found
+        if asm_unmasked_node is None:
+            raise ValueError(
+                f"Portal '{portal}': Could not find 'Genome Assembly (unmasked)' node. "
+                "The portal structure may have changed or this portal lacks the required assembly."
+            )
+        
         annotate_assembly(organisms_csv, asm_unmasked_node)
 
         # A few projects don't have unmasked assemblies. Assign masked ones in this case.
         if not organisms_csv[portal].assembly_file:
             print(f"Portal {portal} missing unmasked assembly. ", end="")
-            print("Attempting masked version...")
-            annotate_missing(organisms_csv, asm_masked_node)
+            if asm_masked_node is None:
+                print("Could not find masked assembly as fallback. Skipping assembly annotation for this portal.")
+            else:
+                print("Attempting masked version...")
+                annotate_missing(organisms_csv, asm_masked_node)
         
-        annotate_gff(organisms_csv, gff_node, hardcoded_gff_files, gff_filenames, skipped_gffs)
+        # Validate GFF node before annotation
+        if gff_node is None:
+            print(f"Portal '{portal}': Warning - Could not find GFF node (Filtered Models > best > Genes). "
+                  "Skipping GFF annotation for this portal.")
+        else:
+            annotate_gff(organisms_csv, gff_node, hardcoded_gff_files, gff_filenames, skipped_gffs)
         
     # Write down all found annotation files.
     repeated_file = outputfolder / "List_gene_gff_filenames.txt"
@@ -692,6 +712,7 @@ def annotate_projects(organisms_csv: dict, xml_file: Path, hardcoded_gff_files: 
 
 def annotate_assembly(organisms_csv, xml_unmasked_assembly):
     duplicated_names = []
+    portal = None  # Initialize to None to avoid UnboundLocalError if iterator yields no elements
     # Projects' names differ between what's annotated in the CSV and XML files.
     #
     # For example:
@@ -728,18 +749,25 @@ def annotate_assembly(organisms_csv, xml_unmasked_assembly):
 
     # Check to see if there are multiple assembly files for this portal
     if len(duplicated_names) > 1:
-        print(f"WARNING! Portal {portal} has more than one assembly file.")     
-        dup_names = ", ".join(duplicated_names)
-        print(f"{portal}\t{dup_names}")
-        print("")
+        if portal is not None:
+            print(f"WARNING! Portal {portal} has more than one assembly file.")     
+            dup_names = ", ".join(duplicated_names)
+            print(f"{portal}\t{dup_names}")
+            print("")
+        else:
+            print("WARNING! Multiple assembly files found but portal information is unavailable.")
     elif len(duplicated_names) == 0:
-        print(f"Portal {portal} has no (unmasked) assembly file.")
+        if portal is not None:
+            print(f"Portal {portal} has no (unmasked) assembly file.")
+        else:
+            print("No (unmasked) assembly files found in the provided XML data.")
 
     return
 
 
 def annotate_missing(organisms_csv, xml_masked_assembly):
     duplicated_names = []
+    portal = None  # Initialize to None to avoid UnboundLocalError if iterator yields no elements
     for element in xml_masked_assembly.iterdescendants():
         filename = element.attrib["filename"]
         url = element.attrib["url"]
@@ -764,12 +792,18 @@ def annotate_missing(organisms_csv, xml_masked_assembly):
         duplicated_names.append(filename)
 
     if len(duplicated_names) > 1:
-        print(f"Warning: portal {portal} has more than one masked assembly file!")     
-        dup_names = ", ".join(duplicated_names)
-        print(f"{portal}\t{dup_names}")
-        print("")
+        if portal is not None:
+            print(f"Warning: portal {portal} has more than one masked assembly file!")     
+            dup_names = ", ".join(duplicated_names)
+            print(f"{portal}\t{dup_names}")
+            print("")
+        else:
+            print("Warning: Multiple masked assembly files found but portal information is unavailable.")
     elif len(duplicated_names) == 0:
-        print(f"Portal {portal} has no (masked) assembly file")
+        if portal is not None:
+            print(f"Portal {portal} has no (masked) assembly file")
+        else:
+            print("No (masked) assembly files found in the provided XML data.")
 
     return
 
@@ -1008,8 +1042,11 @@ def main():
         exit("All data fetched")
     
     # ========== INPUT VALIDATION ==========
-    if not (args.xml).is_file():
+    if args.xml is None or not args.xml.is_file():
         exit("Error: invalid file specified with --xml")
+    
+    if args.csv is None or not args.csv.is_file():
+        exit("Error: invalid file specified with --csv")
 
     # ========== SETUP & DATA LOADING ==========
     # Create output directory
