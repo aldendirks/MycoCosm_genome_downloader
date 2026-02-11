@@ -75,16 +75,16 @@ If you already have downloaded data, you can simply use your local copy of the f
 
 ## Output
 
-Each 'leaf' folder within the folder structure represents a genome from MycoCosm and contains the genome assembly FASTA and gene annotation GFF3 files (compressed as .gz). Additionally, three files are found inside the base output folder:
+Each 'leaf' folder within the folder structure represents a genome from MycoCosm and contains the genome assembly FASTA and gene annotation GFF3 files (compressed as `.gz`). Additionally, three files are found inside the base output folder:
 * `JGI_taxonomy.tsv`. Columns: `Short name` (Portal), `Accession` (same as short name in this case), `TaxId` (from NCBI), `Name` (project name), `Path` (relative path from output folder to Portal), `Assembly file`, `GFF file`, `lineage` (comma-separated)
 * `JGI_download_list_[date].txt`: All the files that were downloaded
 * `List_gene_gff_filenames.txt`: All gff files for each portal
 
 ## Known limitations and notes
 
-* The incorrect gff might have been chosen
-* Some old gff files can't be processed correctly by other tools (e.g. bcbio.gff)
-* Can't handle dikaryon genomes ("primary/secondary alleles")
+* The incorrect GFF might have been chosen
+* Some old GFF files can't be processed correctly by other tools (e.g. `bcbio-gff`)
+* Doesn't handle dikaryon genomes ("primary/secondary alleles")
 
 ## More details
 
@@ -95,7 +95,7 @@ These are the folders that are scanned for files, as they appear in each Portal'
 * Assemblies: "Genome Assembly (unmasked)" (previously called "Assembled scaffolds (unmasked)")
 * Gene annotations: "Filtered Models ('best')"
 
-Note: Some genomes seem to be only available in the "masked" version (e.g. `Pyrtr1`, `Altbr1`, etc.)
+**Note:** Some genomes seem to be only available in the "masked" version (e.g. `Pyrtr1`, `Altbr1`, etc.)
 
 ### Choosing the right annotation file
 
@@ -103,14 +103,12 @@ There are usually a few files to choose from in the "Filtered Models ('best')" f
 * In some cases, the choosing was done manually and incorporated to the `hardcoded_gff_files.tsv` file. If the Portal has an entry here, use the indicated file. This is a work in progress!
 * Skip some specific files: `Aciri1_meta_GeneCatalog_genes_20111216.gff.gz`, `Exoaq1_GeneCatalog_20160901.gff3.gz`, `Exoaq1_GeneCatalog_20160828.gff3.gz`, `Fonpe1_GeneCatalog_20160901.gff3.gz`, `Copmic2_FM1_removed_alleles.gff.gz`
 * Skip files with `proteins` or `secondary_alleles` in their name
-* Skip files with the following extensions: `gtf.gz`, `tgz` and any other that is *not* `gz`
+* Skip files with the following extensions: `gtf.gz`, `tgz`, and any other that is *not* `gz`
 * Prefer `gff3` files
 * If we have two `gff3` (or two `gff`) files, prefer the most recent
-
 
 ### Ignored assembly files / portals
 
 * Files with `MitoAssembly`, `MitoScaffolds`, `PrimaryAssemblyScaffolds` or `SecondaryAssemblyScaffolds` in their name
-* Excluded assemblies (hardcoded). Ignore these filenames as they're not related to assemblies, are old versions or
- are assemblies of meta-samples: `1034997.Tuber_borchii_Tbo3840.standard.main.scaffolds.fasta.gz`, `Spofi1.draft.mito.scaffolds.fasta.gz`, `Patat1.draft.mito.scaffolds.fasta.gz`, `PleosPC9_1_Assembly_scaffolds.fasta.gz`, `Neuhi1_PlasmidAssemblyScaffolds.fasta.gz`, `CocheC5_1_assembly_scaffolds.fasta.gz`, `Alternaria_brassicicola_masked_assembly.fasta.gz`, `Aciri1_meta_AssemblyScaffolds.fasta.gz`, `Rhoto_IFO0880_2_AssemblyScaffolds.fasta.gz`
+* Excluded assemblies (hardcoded). Ignore these filenames as they're not related to assemblies, are old versions or are assemblies of meta-samples: `1034997.Tuber_borchii_Tbo3840.standard.main.scaffolds.fasta.gz`, `Spofi1.draft.mito.scaffolds.fasta.gz`, `Patat1.draft.mito.scaffolds.fasta.gz`, `PleosPC9_1_Assembly_scaffolds.fasta.gz`, `Neuhi1_PlasmidAssemblyScaffolds.fasta.gz`, `CocheC5_1_assembly_scaffolds.fasta.gz`, `Alternaria_brassicicola_masked_assembly.fasta.gz`, `Aciri1_meta_AssemblyScaffolds.fasta.gz`, `Rhoto_IFO0880_2_AssemblyScaffolds.fasta.gz`
 * Ignored portals (hardcoded). Metaprojects or old versions: `Rhoto_IFO0880_2`, `Aciri1_meta`, `Pospl1`
