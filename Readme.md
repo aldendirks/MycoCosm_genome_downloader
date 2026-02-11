@@ -19,14 +19,14 @@ source venv/bin/activate
 pip install ete4 lxml
 ```
 
-**Optional but recommended:** save your JGI login credentials as a txt file (`credentials.txt`) in the git repository to automatically log in for commands that require login credentials. The username should be on the first line and the password on the second. 
+**Optional but recommended:** save your JGI login credentials as a text file (`credentials.txt`) in the git repository to automatically log in for commands that require login credentials. The username should be on the first line and the password on the second with no other text. 
 
 
 ## Usage 
 
 ### Update the taxonomy database
 
-As part of the output of this program, a "taxonomy" file is created, which includes the lineage for each species (this lineage is also used to create the folder structure for the output). For this, `ete4` is used. Use the following command to update the database:
+As part of the output of this program, a "taxonomy" file is created, which includes the lineage for each species (this lineage is also used to create the folder structure for the output). For this, `ete4` is used. Use the following command to update the database.
 
 ```
 python mycocosm_genome_downloader.py --update
@@ -40,12 +40,12 @@ It is optional but recommended to specify an output folder when downloading file
 
 ```
 python mycocosm_genome_downloader.py --getgenomelist
-python mycocosm_genome_downloader.py -o $out --getgenomelist
+python mycocosm_genome_downloader.py --getgenomelist -o $out 
 ```
 
-The list of genomes is a comma-separated value file which enlists all current projects ("**portals**") in MycoCosm (`MycoCosm_Genome_list.csv`). Note: it uses ISO-8859-15 encoding.
+The genomes list is a comma-separated file which includes all current projects ("**portals**") in MycoCosm (`MycoCosm_Genome_list.csv`). Note: it uses ISO-8859-15 encoding.
 
-2. Obtain a list of files to download using either the default output directory or specifying your own and optionally including credentials files for easier running.
+2. Obtain a list of files to download using either the default output directory or specifying your own and optionally including a credentials files for easier log in.
 
 ```
 python mycocosm_genome_downloader.py --getxml
