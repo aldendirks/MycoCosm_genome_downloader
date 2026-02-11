@@ -43,38 +43,39 @@ python mycocosm_genome_downloader.py --getgenomelist
 python mycocosm_genome_downloader.py --getgenomelist -o $out 
 ```
 
-The genomes list is a comma-separated file which includes all current projects ("**portals**") in MycoCosm (`MycoCosm_Genome_list.csv`). Note: it uses ISO-8859-15 encoding.
+The genomes list is a comma-separated file which includes all current projects ("**portals**") in MycoCosm (`MycoCosm_Genome_list.csv`). **Note:** it uses ISO-8859-15 encoding.
 
 2. Obtain a list of files to download using either the default output directory or specifying your own and optionally including a credentials files for easier log in.
 
 ```
 python mycocosm_genome_downloader.py --getxml
-python mycocosm_genome_downloader.py -o $out -j $credentials --getxml
+python mycocosm_genome_downloader.py --getxml -o $out
+python mycocosm_genome_downloader.py --getxml -o $out -j $credentials 
 ```
 
-The list of files is stored as `MycoCosm_data.xml`. This file takes about an hour to download and is around 70 MB in size. After downloading, the XML file is re-formatted to be human-readable. If there is already a file called `MycoCosm_data.xml` in the output folder, it will be updated with any missing data.
+The XML file is named `MycoCosm_data.xml`. It takes about an hour to download and is around 70 MB in size. After downloading, the XML file is re-formatted to be human-readable. If there is already a file called `MycoCosm_data.xml` in the output folder, it will be updated with any missing data.
 
 
 ### Download data
 
-Once you have the genomes and files lists, use them to download the data. It took about four hours to download 2864 portals and the compressed files sum up to about 40 GB.
+Once you have the genomes and avialable file lists, use them to download the data. It took about four hours to download 2864 portals. The compressed files sum up to about 40 GB.
 
 ```
-python mycocosm_genome_downloader.py -o $out --csv [path to MycoCosm_Genome_list.csv] --xml [path to MycoCosm_data.xml]
+python mycocosm_genome_downloader.py --csv [path to MycoCosm_Genome_list.csv] --xml [path to MycoCosm_data.xml] -o $out 
 ```
 
-This will create a directory structure that follows the fungal taxonomy tree as MycoCosm's [main page](https://mycocosm.jgi.doe.gov/mycocosm/home).
+This will create a directory structure that follows the fungal taxonomy tree at MycoCosm [main page](https://mycocosm.jgi.doe.gov/mycocosm/home).
 
-Optional: use parameter `--simulate` to create the directory structure without downloading any files.
+**Optional:** use parameter `--simulate` to create the directory structure without downloading any files.
 
-### Optional: re-use data
+### Re-use data
 
-If you already have downloaded data, you can simply use your local copy of the files instead of downloading them. This makes it easier to update with new genomes. First, use option `--getprevious`, which will scan a base folder with previous results and create a file called `previously_downloaded_files.tsv`. Use this file with option `--previous` to skip files already downloaded.
+If you already have downloaded data, you can simply use your local copy of the files instead of downloading them. This makes it easier to update with new genomes. Use the option `--getprevious`, which will scan a base folder with previous results and create a file called `previously_downloaded_files.tsv`. Use this file with option `--previous` to skip files already downloaded.
 
 
 ## Output
 
-Each 'leaf' folder within the folder structure represents a genome from MycoCosm and contains the fasta + gff files (compressed as .gz). Additionally, three files are found inside the base output folder:
+Each 'leaf' folder within the folder structure represents a genome from MycoCosm and contains the genome assembly FASTA and gene annotation GFF3 files (compressed as .gz). Additionally, three files are found inside the base output folder:
 * `JGI_taxonomy.tsv`. Columns: `Short name` (Portal), `Accession` (same as short name in this case), `TaxId` (from NCBI), `Name` (project name), `Path` (relative path from output folder to Portal), `Assembly file`, `GFF file`, `lineage` (comma-separated)
 * `JGI_download_list_[date].txt`: All the files that were downloaded
 * `List_gene_gff_filenames.txt`: All gff files for each portal
