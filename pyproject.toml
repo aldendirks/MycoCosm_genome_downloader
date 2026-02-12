@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mycocosm_downloader"
+version = "2.0.1"
+description = "Download JGI MycoCosm genome data"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ete4",
+    "lxml",
+    "requests"
+]
+
+[project.scripts]
+mycocosm_downloader = "mycocosm_downloader.cli:main"

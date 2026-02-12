@@ -1,4 +1,13 @@
-dev
-venv
+*.pyc
+*.pyo
+*.pyd
+cookie.txt
 credentials.txt
-jgi_cookie.txt
+
+__pycache__/
+*.egg-info/
+.env/
+.venv/
+dev/
+dist/
+build/
