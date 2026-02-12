@@ -657,15 +657,10 @@ def annotate_projects(organisms_csv: dict, xml_file: Path, hardcoded_gff_files: 
                         for subsubfolder in Filtered:
                             if subsubfolder.attrib["name"] == "Genes":
                                 gff_node = subsubfolder
-
-        # Validate that required nodes were found
-        if asm_unmasked_node is None:
-            raise ValueError(
-                f"Portal '{portal}': Could not find 'Genome Assembly (unmasked)' node. "
-                "The portal structure may have changed or this portal lacks the required assembly."
-            )
         
-        annotate_assembly(organisms_csv, asm_unmasked_node)
+        # Process unmasked assembly if available
+        if asm_unmasked_node is not None:
+            annotate_assembly(organisms_csv, asm_unmasked_node)
 
         # A few projects don't have unmasked assemblies. Assign masked ones in this case.
         if not organisms_csv[portal].assembly_file:
